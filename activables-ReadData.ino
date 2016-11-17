@@ -66,17 +66,22 @@ void loop () {
     setReadChannel(column);
     
     for(int row = 2; row < 6; row++) {
+      
       digitalWrite(row, HIGH); // put each row to 5V
       delay(10);
+      
       value = analogRead(listenPin); // Read pressure
       valueCol[row-2] = value; // Add to group
+      
       if(column < 4 || row < 5) {
         values += " "; // separate values with space
       }
+      // Add to chain of values
       values += value;
       digitalWrite(row, LOW); // remove 5V
       delay(10);
     }
+    // Apply colours to LEDs
     setLedColors(column);
   }
   // Send set of 16 values over serial
@@ -99,7 +104,10 @@ void setReadChannel(int chanNr){
 
 // Set the LED colors based on pressure values
 void setLedColors(int setNr) {
+  // setPixelColor(nr, R, G, B, W) RGBW: 0..255, Values: 0..1024
+  // LED nr 1, normalize RGBW first
   strip.setPixelColor(setNr * 2, valueCol[0] / 1024 * 255, valueCol[1] / 1024 * 255, valueCol[2] / 1024 * 255, valueCol[3] / 1024 * 255);
+  // LED nr 2
   strip.setPixelColor(setNr * 2 + 1, valueCol[0] / 1024 * 255, valueCol[1] / 1024 * 255, valueCol[2] / 1024 * 255, valueCol[3] / 1024 * 255);
 }
 
