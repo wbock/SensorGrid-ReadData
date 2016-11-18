@@ -48,7 +48,7 @@ void setup(){
   digitalWrite(7, LOW); // Multiplexer select pin, bit 1
   digitalWrite(8, LOW); // Multiplexer select pin, bit 2
 
-  strip.setBrightness(255); // Maximum brightness 0..255
+  strip.setBrightness(55); // Maximum brightness 0..255
   strip.begin();
   strip.show(); // Set all leds to 0
   
