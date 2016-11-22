@@ -65,7 +65,7 @@ void loop () {
     
     setReadChannel(column);
     
-    for(int row = 2; row < 6; row++) {
+    for(int row = 2; row < 5; row++) {
       
       digitalWrite(row, HIGH); // put each row to 5V
       delay(10);
