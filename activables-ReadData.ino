@@ -24,7 +24,7 @@ String values = ""; //Set of all values
 int LED_COUNT = 8;
 int LED_PIN = 10;
 // Using leds with WS2811 controller
-Adafruit_NeoPixel strip = Adafruit_NeoPixel(LED_COUNT, LED_PIN, NEO_GRB + NEO_KHZ800);
+//Adafruit_NeoPixel strip = Adafruit_NeoPixel(LED_COUNT, LED_PIN, NEO_GRB + NEO_KHZ800);
  
 void setup(){
   pinMode(pinEN, OUTPUT);    //low to activate mux
@@ -48,9 +48,9 @@ void setup(){
   digitalWrite(7, LOW); // Multiplexer select pin, bit 1
   digitalWrite(8, LOW); // Multiplexer select pin, bit 2
 
-  strip.setBrightness(55); // Maximum brightness 0..255
-  strip.begin();
-  strip.show(); // Set all leds to 0
+  //strip.setBrightness(55); // Maximum brightness 0..255
+  //strip.begin();
+  //strip.show(); // Set all leds to 0
   
   Serial.begin(9600);
   analogRead(listenPin);
@@ -82,11 +82,11 @@ void loop () {
       delay(10);
     }
     // Apply colours to LEDs
-    setLedColors(column);
+    //setLedColors(column);
   }
   // Send set of 16 values over serial
   Serial.println(values);
-  strip.show();
+  //strip.show();
 }
 
 // Set the multiplexer to read from specific channel. Current switches 0...3
