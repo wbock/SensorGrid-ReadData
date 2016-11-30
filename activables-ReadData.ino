@@ -1,19 +1,28 @@
 /* 
- * Read pressure data via multiplexer
- * Based on: http://playground.arduino.cc/Learning/4051
+ * Read pressure data via shift register & angle from gyro
+ * Based on: https://www.arduino.cc/en/Tutorial/ShftOut11
+ *      and: https://learn.adafruit.com/adafruit-bno055-absolute-orientation-sensor/wiring-and-test
+ * 
  * 
  * @author wbock
  *
  */
 
- #include <Adafruit_NeoPixel.h>
+#include <Wire.h>
+#include <Adafruit_Sensor.h>
+#include <Adafruit_BNO055.h>
+#include <utility/imumaths.h>
+  
+Adafruit_BNO055 bno = Adafruit_BNO055(55);
 
-// Hardware pin numbers
-int r0 = 0;      //value of select pin at the multiplexer
-int r1 = 0;      //value of select pin at the multiplexer
-int r2 = 0;      //value of select pin at the multiplexer
-int pinEN = 1; 
-int listenPin = 0;
+//Pin connected to ST_CP of 74HC595
+int latchPin = 8;
+//Pin connected to SH_CP of 74HC595
+int clockPin = 10;
+////Pin connected to DS of 74HC595
+int dataPin = 9;
+
+int[] chanels = {2, 4, 8, 16, 32, 64};
 
 // Temp vars
 int value = 0; //Current read value
@@ -27,36 +36,56 @@ int LED_PIN = 10;
 //Adafruit_NeoPixel strip = Adafruit_NeoPixel(LED_COUNT, LED_PIN, NEO_GRB + NEO_KHZ800);
  
 void setup(){
-  pinMode(pinEN, OUTPUT);    //low to activate mux
+  //set pins to output so you can control the shift register
+  pinMode(latchPin, OUTPUT);
+  pinMode(clockPin, OUTPUT);
+  pinMode(dataPin, OUTPUT);
 
-  pinMode(2, OUTPUT); // keltainen
-  pinMode(3, OUTPUT); // oranssi
-  pinMode(4, OUTPUT); // punainen
-  pinMode(5, OUTPUT); // ruskea
-
-  pinMode(6, OUTPUT); // r0
-  pinMode(7, OUTPUT); // r1
-  pinMode(8, OUTPUT); // r2
-  digitalWrite(pinEN,LOW);
-
-  digitalWrite(2, LOW); // Row 1
-  digitalWrite(3, LOW); // Row 2
-  digitalWrite(4, LOW); // Row 3
-  digitalWrite(5, LOW); // Row 4
-
-  digitalWrite(6, LOW); // Multiplexer select pin, bit 0
-  digitalWrite(7, LOW); // Multiplexer select pin, bit 1
-  digitalWrite(8, LOW); // Multiplexer select pin, bit 2
+//  pinMode(2, OUTPUT); // keltainen
+//  pinMode(3, OUTPUT); // oranssi
+//  pinMode(4, OUTPUT); // punainen
+//  pinMode(5, OUTPUT); // ruskea
+//
+//  pinMode(6, OUTPUT); // r0
+//  pinMode(7, OUTPUT); // r1
+//  pinMode(8, OUTPUT); // r2
+//  digitalWrite(pinEN,LOW);
+//
+//  digitalWrite(2, LOW); // Row 1
+//  digitalWrite(3, LOW); // Row 2
+//  digitalWrite(4, LOW); // Row 3
+//  digitalWrite(5, LOW); // Row 4
+//
+//  digitalWrite(6, LOW); // Multiplexer select pin, bit 0
+//  digitalWrite(7, LOW); // Multiplexer select pin, bit 1
+//  digitalWrite(8, LOW); // Multiplexer select pin, bit 2
 
   //strip.setBrightness(55); // Maximum brightness 0..255
   //strip.begin();
   //strip.show(); // Set all leds to 0
   
   Serial.begin(9600);
-  analogRead(listenPin);
 }
 
 void loop () {
+
+  for (int numberToDisplay = 2; numberToDisplay < 8; numberToDisplay++) {
+    // take the latchPin low so
+    // the LEDs don't change while you're sending in bits:
+    digitalWrite(latchPin, LOW);
+    // shift out the bits:
+    shiftOut(dataPin, clockPin, MSBFIRST, numberToDisplay);  
+
+    //take the latch pin high so the LEDs will light up:
+    digitalWrite(latchPin, HIGH);
+    // pause before next value:
+    delay(200);
+    Serial.print(analogRead(A0));
+    Serial.print(" ");
+    Serial.print(analogRead(A1));
+    Serial.print(" ");
+    Serial.println(analogRead(A2));
+  }
   
   values = ""; //Reset chain of values
 
