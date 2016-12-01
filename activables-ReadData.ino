@@ -51,13 +51,13 @@ void loop () {
     values += i;
     values += " ";
 
-    for (int i = 0; i < 6; i++) {
+    for (int ii = 0; ii < 6; ii++) {
       // take the latchPin low so
       // the LEDs don't change while you're sending in bits:
       digitalWrite(latchPin, LOW);
       
       // shift out the bits:
-      shiftOut(dataPin, clockPin, MSBFIRST, chanels[i]);
+      shiftOut(dataPin, clockPin, MSBFIRST, chanels[ii]);
 
       //take the latch pin high so the LEDs will light up:
       digitalWrite(latchPin, HIGH);
@@ -66,7 +66,7 @@ void loop () {
       values += analogRead(i);
 
       // Spacing between values
-      if(i < 5) {
+      if(ii < 5) {
         values +=  " ";
       }
     }
