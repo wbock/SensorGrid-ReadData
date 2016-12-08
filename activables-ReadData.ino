@@ -12,6 +12,7 @@
 #include <Adafruit_Sensor.h>
 #include <Adafruit_BNO055.h>
 #include <utility/imumaths.h>
+#include <math.h>
 
 Adafruit_BNO055 bno = Adafruit_BNO055(55);
 
@@ -56,19 +57,6 @@ void setup() {
 
 void loop () {
 
-  /* Get a new sensor event */ 
-  sensors_event_t event; 
-  bno.getEvent(&event);
-  
-  /* Display the floating point data */
-  Serial.print("X: ");
-  Serial.print(event.orientation.x, 4);
-  Serial.print("\tY: ");
-  Serial.print(event.orientation.y, 4);
-  Serial.print("\tZ: ");
-  Serial.print(event.orientation.z, 4);
-  Serial.println("");
-
   for (int i = 0; i < 3; i++) {
 
     // First value = row number
@@ -97,6 +85,25 @@ void loop () {
     }
     // Send values row-by-row
     Serial.println(values);
+
+    // Send gyro data in-between
+    loadGyroValues();
+    Serial.println(values);
   }
+}
+
+void loadGyroValues() {
+  
+  /* Get a new sensor event */ 
+  sensors_event_t event; 
+  bno.getEvent(&event);
+  
+  /* Display the floating point data */
+  values = "3 ";
+  values += roundf(event.orientation.x);
+  values += " ";
+  values += roundf(event.orientation.y);
+  values += " ";
+  values += roundf(event.orientation.z);
 }
 
